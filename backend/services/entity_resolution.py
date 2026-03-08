@@ -94,7 +94,7 @@ def resolve_entities(extracted_items: list, df_excel: pd.DataFrame, excel_column
             exact_matches.append(result_item)
             continue
             
-        # AŞAMA 2: Bulanık Eşleşme (RapidFuzz)
+        # AŞAMA 2: Bulanık Eşleşme (RapidFuzz) VE EBAT KALKANI
         best_match = process.extractOne(
             target_key, 
             excel_key_list, 
@@ -105,11 +105,24 @@ def resolve_entities(extracted_items: list, df_excel: pd.DataFrame, excel_column
         if best_match:
             matched_key, score, match_index = best_match
             if score >= 90.0:  # Eğer RapidFuzz çok eminse
-                 result_item['match_type'] = 'fuzzy'
-                 result_item['excel_match'] = excel_keys[matched_key]
-                 result_item['confidence'] = float(score)
-                 fuzzy_matches.append(result_item)
-                 continue
+                
+                # --- SIKI EBAT KONTROLÜ (STRICT SIZE FILTER) ---
+                target_size_match = re.search(r'\b\d{2,3}x\d{2,3}\b', target_key)
+                target_size = target_size_match.group() if target_size_match else None
+                
+                matched_size_match = re.search(r'\b\d{2,3}x\d{2,3}\b', matched_key)
+                matched_size = matched_size_match.group() if matched_size_match else None
+                
+                # Eğer ikisinde de ebat varsa ve KESİNLİKLE uyuşmuyorsa, Bulanık Eşleşmeyi REDDET ve Aşama 3'e pasla!
+                if target_size and matched_size and target_size != matched_size:
+                    pass # Ebatlar uymuyor, bu tuzağa düşme!
+                else:
+                    # Ebatlar uyuyorsa veya ebat gerektirmeyen bir ürünse (Komidin vb.) eşleşmeyi kabul et
+                    result_item['match_type'] = 'fuzzy'
+                    result_item['excel_match'] = excel_keys[matched_key]
+                    result_item['confidence'] = float(score)
+                    fuzzy_matches.append(result_item)
+                    continue
                  
         # AŞAMA 3: Hibrit Arama (Semantic FAISS + Keyword BM25) & Strict Size Regex
         # Vektör aramadan en iyi 10 adayı al, BM25 ile kelime odaklı birleştir, Regex Filtresinden geçir

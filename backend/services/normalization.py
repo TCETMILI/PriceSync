@@ -40,7 +40,12 @@ EXCEL_DICTIONARY = {
     "yitas": "yts",
     "yt": "yts",
     "set": "takim",
+    "tk": "takim",
     "aura": "ayak ucu",
+    "auc": "ayak ucu",          # Manuel olarak eklendi
+    "komidin": "komodin",       # Manuel olarak eklendi
+    "sifonyer": "sifonyer",     # Manuel olarak eklendi
+    "şifonyer": "sifonyer",
     "kasa": "para kasasi",
     "kucuk": "kucuk",
     "buyuk": "buyuk",

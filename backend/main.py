@@ -2,7 +2,7 @@ import os
 import asyncio
 import json
 import pandas as pd
-from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Request
+from fastapi import FastAPI, UploadFile, File, BackgroundTasks, Request, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sse_starlette.sse import EventSourceResponse
@@ -141,6 +141,13 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, "temp_upload.pdf")
     
+    # Self-Destruct Mekanizması: Yeni yüklendiğinde eski kalıntıları SİL
+    for old_file in ["SSTOK_LISTESI_GUNCEL.xlsx", "PriceSync_Rapor.xlsx"]:
+        try:
+            os.remove(os.path.join(upload_dir, old_file))
+        except OSError:
+            pass
+
     with open(file_path, "wb") as buffer:
         content = await file.read()
         buffer.write(content)
@@ -157,7 +164,7 @@ def download_excel():
     # Enjektör tarafından kaydedilen son dosya adı SSTOK_LISTESI_GUNCEL.xlsx
     file_path = "/app/data/SSTOK_LISTESI_GUNCEL.xlsx"
     if not os.path.exists(file_path):
-        return {"message": "Güncel dosya henüz bulunmuyor."}
+        raise HTTPException(status_code=404, detail="Analiz henüz tamamlanmadı, lütfen bekleyin.")
     return FileResponse(
         file_path, 
         filename="SSTOK_LISTESI_GUNCEL.xlsx", 
@@ -170,7 +177,7 @@ def download_report():
     """Oluşturulan PriceSync Audit Log raporunu indirir."""
     file_path = "/app/data/PriceSync_Rapor.xlsx"
     if not os.path.exists(file_path):
-        return {"message": "Rapor henüz oluşturulmadı."}
+        raise HTTPException(status_code=404, detail="Analiz henüz tamamlanmadı, lütfen bekleyin.")
     return FileResponse(
         file_path, 
         filename="PriceSync_Rapor.xlsx", 

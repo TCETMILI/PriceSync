@@ -46,6 +46,8 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
    - product_type: "BAZA" (Veya SET / KOMİDİN vb.)
    - size_or_spec: "150x200" (SADECE İlave Ürünler gibi ebadı olmayanlarda "Standart" yazılacak, SET'lerde dahil diğer hepsinde yukarıdaki tablodan boyut okunacak)
 
+5. UZUN LİSTE VE TOKEN KESİNTİSİ UYARISI (HAYATİ ÖNEMDE): Sayfada 150'den fazla fiyat etiketi olabilir. Bu, çıktının çok uzun olacağı anlamına gelir. Asla ve ASLA tembellik yapıp 'benzerleri atla' veya 'kısalt' mantığına girme. Çıktıyı yarıda kesme. Tüm satırları SONUNA KADAR (gerekirse 15.000 token sürse bile) tek tek yaz. Atladığın her bir ürün KRİTİK SİSTEM HATASI kabul edilecektir!
+
 Çıktın KESİNLİKLE markdown kod blokları içinde veya dışında sadece saf JSON objesi içermelidir. Başka hiçbir açıklama yazma.
 İstediğimiz JSON modeli tam olarak şudur:
 {{
@@ -64,7 +66,7 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
 '''
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-2024-08-06",
         messages=[
             {
                 "role": "system",
@@ -75,7 +77,7 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
                 "content": [
                     {
                         "type": "text",
-                        "text": "Lütfen görseldeki güncel ürünlerin verilerini belirlenen JSON formatına göre listele."
+                        "text": "Lütfen görseldeki güncel ürünlerin verilerini belirlenen JSON formatına göre listele. Tek bir fiyatı bile atlama!"
                     },
                     {
                         "type": "image_url",
@@ -87,7 +89,8 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
             }
         ],
         response_format={"type": "json_object"},
-        temperature=0.0
+        temperature=0.0,
+        max_tokens=16384
     )
     
     response_content = response.choices[0].message.content

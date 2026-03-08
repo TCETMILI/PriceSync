@@ -141,12 +141,18 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     os.makedirs(upload_dir, exist_ok=True)
     file_path = os.path.join(upload_dir, "temp_upload.pdf")
     
-    # Self-Destruct Mekanizması: Yeni yüklendiğinde eski kalıntıları SİL
-    for old_file in ["SSTOK_LISTESI_GUNCEL.xlsx", "PriceSync_Rapor.xlsx"]:
-        try:
-            os.remove(os.path.join(upload_dir, old_file))
-        except OSError:
-            pass
+    # 🚨 SELF-DESTRUCT (ÖN TEMİZLİK) MEKANİZMASI 🚨
+    # Yeni dosya yüklenir yüklenmez eski raporları acımasızca sil!
+    report_path = os.path.join(upload_dir, "PriceSync_Rapor.xlsx")
+    excel_path = os.path.join(upload_dir, "SSTOK_LISTESI_GUNCEL.xlsx")
+    
+    try:
+        if os.path.exists(report_path):
+            os.remove(report_path)
+        if os.path.exists(excel_path):
+            os.remove(excel_path)
+    except Exception as e:
+        print(f"Eski dosya silinemedi: {e}")
 
     with open(file_path, "wb") as buffer:
         content = await file.read()
@@ -154,17 +160,16 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
         
     # İşlemi arkaplana at
     background_tasks.add_task(process_pdf_background, file_path)
-    return {"message": "Dosya başarıyla alındı, analiz başlatıldı."}
+    return {"message": "Dosya başarıyla alındı, eski veriler imha edildi, analiz başlatıldı."}
 
 
 
 @app.get("/download-excel")
 def download_excel():
     """Güncellenmiş Excel dosyasını Frontend'e indirilebilir formatta sunar."""
-    # Enjektör tarafından kaydedilen son dosya adı SSTOK_LISTESI_GUNCEL.xlsx
     file_path = "/app/data/SSTOK_LISTESI_GUNCEL.xlsx"
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Analiz henüz tamamlanmadı, lütfen bekleyin.")
+        raise HTTPException(status_code=404, detail="Güncel dosya henüz hazır değil veya işlem devam ediyor!")
     return FileResponse(
         file_path, 
         filename="SSTOK_LISTESI_GUNCEL.xlsx", 
@@ -177,7 +182,7 @@ def download_report():
     """Oluşturulan PriceSync Audit Log raporunu indirir."""
     file_path = "/app/data/PriceSync_Rapor.xlsx"
     if not os.path.exists(file_path):
-        raise HTTPException(status_code=404, detail="Analiz henüz tamamlanmadı, lütfen bekleyin.")
+        raise HTTPException(status_code=404, detail="Rapor henüz oluşturulmadı, lütfen işlemin bitmesini bekleyin!")
     return FileResponse(
         file_path, 
         filename="PriceSync_Rapor.xlsx", 

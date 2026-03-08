@@ -33,9 +33,7 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
 2. DİNAMİK SINIR VE GERÇEKÇİ KAPSAMA:
    Sayfada kaç tane fiyat etiketi (₺ veya rakam) varsa, dinamik olarak sayısını kendin bul ve HİÇBİRİNİ ATLAMADAN hepsini çıkar. İster 10 tane olsun ister 300 tane, sadece gördüğün GERÇEK fiyatları çıkar. Olmayan bir ürünü uydurmak KESİNLİKLE YASAK! Sadece ve sadece sayfada gerçekten gördüğün fiyat etiketlerinin kesişimlerini listele.
 
-3. SET ÜRÜNLERİ VE İLAVE ÜRÜNLER İSTİSNASI:
-   - "SET" ürünleri tablonun sol tarafındadır ve onların da Baza/Başlık gibi üstlerinde (150x200, 160x200 vb.) ebat sütunları VARDIR! SET fiyatlarını okurken ebadını KESİNLİKLE tam üstündeki sütundan (yukarı bakarak) alacaksın.
-   - SADECE en sağdaki "İLAVE ÜRÜNLER" (Komidin, Markiz, Kasa vb.) listesinin ebat sütunu YOKTUR. SADECE onlar için ebat (size_or_spec) kısmına "Standart" yaz.
+3. İLAVE ÜRÜNLER İSTİSNASI: SADECE en sağdaki "İLAVE ÜRÜNLER" (Komidin, Markiz, Kasa vb.) listesinin ebat sütunu YOKTUR. SADECE onlar için ebat (size_or_spec) kısmına "Standart" yaz.
 
 4. TEMBELLİK YASAK (PARÇALI JSON FORMATI):
    Verileri bulduğunda tek bir string cümle olarak tıkıştırmak YASAKTIR. 
@@ -47,6 +45,8 @@ def extract_data_from_image(image_path: str, page_number: int) -> ExtractedPageD
    - size_or_spec: "150x200" (SADECE İlave Ürünler gibi ebadı olmayanlarda "Standart" yazılacak, SET'lerde dahil diğer hepsinde yukarıdaki tablodan boyut okunacak)
 
 5. UZUN LİSTE VE TOKEN KESİNTİSİ UYARISI (HAYATİ ÖNEMDE): Sayfada 150'den fazla fiyat etiketi olabilir. Bu, çıktının çok uzun olacağı anlamına gelir. Asla ve ASLA tembellik yapıp 'benzerleri atla' veya 'kısalt' mantığına girme. Çıktıyı yarıda kesme. Tüm satırları SONUNA KADAR (gerekirse 15.000 token sürse bile) tek tek yaz. Atladığın her bir ürün KRİTİK SİSTEM HATASI kabul edilecektir!
+
+6. HARİÇ TUTULACAK ÜRÜNLER (KARA LİSTE - KESİN EMİR): Katalogda "SET" veya "TAKIM" isminde satırlar göreceksin. Bu satırları ve onlara ait hiçbir fiyatı KESİNLİKLE ÇIKARMA! Sayfada "SET" veya "TAKIM" yazısını gördüğün an o satırı TAMAMEN KÖR GİBİ ATLA ve JSON listesine ASLA ekleme. Sadece tekil ürünlerin (Baza, Başlık, Yatak, İlave ürünler vb.) fiyatlarını al.
 
 Çıktın KESİNLİKLE markdown kod blokları içinde veya dışında sadece saf JSON objesi içermelidir. Başka hiçbir açıklama yazma.
 İstediğimiz JSON modeli tam olarak şudur:

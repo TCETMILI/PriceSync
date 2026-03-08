@@ -159,8 +159,8 @@ def resolve_entities(extracted_items: list, df_excel: pd.DataFrame, excel_column
             ai_decision = judge_match(target_key, candidate_texts)
             print(f"🧐 [AI Gözlemi] Hedef: '{target_key}' | Karar Indeksi: {ai_decision.match_index} | Güven: {ai_decision.confidence}%")
             
-            # %95 üstü güven varsa ve geçerli bir indeks döndüyse
-            if ai_decision.match_index != -1 and ai_decision.confidence >= 95.0:
+            # %85 üstü güven varsa ve geçerli bir indeks döndüyse
+            if ai_decision.match_index != -1 and ai_decision.confidence >= 85.0:
                  chosen_candidate = hybrid_candidates[ai_decision.match_index]
                  result_item['match_type'] = 'ai_judge_hybrid'
                  result_item['excel_match'] = chosen_candidate['item']

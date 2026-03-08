@@ -143,14 +143,18 @@ async def upload_pdf(background_tasks: BackgroundTasks, file: UploadFile = File(
     
     # 🚨 SELF-DESTRUCT (ÖN TEMİZLİK) MEKANİZMASI 🚨
     # Yeni dosya yüklenir yüklenmez eski raporları acımasızca sil!
-    report_path = os.path.join(upload_dir, "PriceSync_Rapor.xlsx")
-    excel_path = os.path.join(upload_dir, "SSTOK_LISTESI_GUNCEL.xlsx")
-    
     try:
-        if os.path.exists(report_path):
-            os.remove(report_path)
-        if os.path.exists(excel_path):
-            os.remove(excel_path)
+        # data klasöründeki eski Excel ve tüm CACHE (.db, .bin, .json, vb.) dosyalarını temizle
+        import glob
+        for ext in ["*.xlsx", "*.db", "*.bin", "*.json", "*.index", "*.pkl"]:
+            for f_path in glob.glob(os.path.join(upload_dir, ext)):
+                # SSTOK_LISTESI.xlsx veritabanının silinmesini engelle
+                if os.path.basename(f_path) != "SSTOK_LISTESI.xlsx":
+                    try:
+                        os.remove(f_path)
+                        print(f"🗑️ Önbellek silindi: {f_path}")
+                    except OSError:
+                        pass
     except Exception as e:
         print(f"Eski dosya silinemedi: {e}")
 

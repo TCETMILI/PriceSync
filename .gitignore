@@ -1,0 +1,39 @@
+# Paket ve Çalışma Ortamı
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.env
+.DS_Store
+
+# Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Geliştirme ve Sanal Ortamlar
+.venv/
+venv/
+env/
+.idea/
+.vscode/
+
+# Docker ve Loglar
+docker-compose.override.yml
+*.log
+LOG.log
+
+# Veri Dosyaları (Temiz Deployment İçin)
+data/*.json
+data/SSTOK_LISTESI_GUNCEL.xlsx
+data/PriceSync_Rapor.xlsx
+data/*.pdf
+data/embeddings_cache.json
+data/*.db
+backend/data/*.json
+backend/data/SSTOK_LISTESI_GUNCEL.xlsx
+backend/data/PriceSync_Rapor.xlsx
+backend/data/*.pdf
+backend/data/embeddings_cache.json
+# Orijinal DB ve Model Cache'lerini isteğe bağlı tutabilirsiniz.
+# data/SSTOK_LISTESI.xlsx

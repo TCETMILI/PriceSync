@@ -185,14 +185,14 @@ export default function Home() {
                   {status === 'completed' && (
                     <div className="flex flex-col gap-4 w-full">
                       <div className="flex gap-4 w-full">
-                        <a href="http://localhost:8000/download-excel" download className="flex-1 flex flex-col items-center justify-center gap-1 p-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-2xl transition-all shadow-sm group">
+                        <a href={`http://localhost:8000/download-excel?t=${Date.now()}`} download className="flex-1 flex flex-col items-center justify-center gap-1 p-4 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 rounded-2xl transition-all shadow-sm group">
                           <div className="flex items-center gap-2 font-bold text-lg">
                             <Download className="w-5 h-5 group-hover:-translate-y-1 transition-transform" /> Güncel Fiyatlı Excel
                           </div>
                           <span className="text-xs font-medium text-emerald-600">Veritabanına Aktarılanlar</span>
                         </a>
 
-                        <a href="http://localhost:8000/download-report" download className="flex-1 flex flex-col items-center justify-center gap-1 p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-2xl transition-all shadow-sm group">
+                        <a href={`http://localhost:8000/download-report?t=${Date.now()}`} download className="flex-1 flex flex-col items-center justify-center gap-1 p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 rounded-2xl transition-all shadow-sm group">
                           <div className="flex items-center gap-2 font-bold text-lg">
                             <FileText className="w-5 h-5 group-hover:-translate-y-1 transition-transform" /> AI İşlem Raporu
                           </div>
